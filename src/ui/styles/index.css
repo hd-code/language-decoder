@@ -1,0 +1,286 @@
+/* base.css ----------------------------------------------------------------- */
+
+* {
+    box-sizing: inherit;
+    font-family: inherit;
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
+}
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, monospace;
+}
+
+small {
+    font-size: 0.8em;
+}
+
+sub,
+sup {
+    font-size: 0.75em;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+sup {
+    top: -0.5em;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* basic.css ---------------------------------------------------------------- */
+
+.block {
+    display: block;
+}
+.inline-block {
+    display: inline-block;
+}
+.inline {
+    display: inline;
+}
+
+.m-025,
+.mx-025,
+.ml-025 {
+    margin-left: 0.25em;
+}
+.m-025,
+.mx-025,
+.mr-025 {
+    margin-right: 0.25em;
+}
+.m-025,
+.mx-025,
+.mt-025 {
+    margin-top: 0.25em;
+}
+.m-025,
+.mx-025,
+.mb-025 {
+    margin-bottom: 0.25em;
+}
+
+.m-05,
+.mx-05,
+.ml-05 {
+    margin-left: 0.5em;
+}
+.m-05,
+.mx-05,
+.mr-05 {
+    margin-right: 0.5em;
+}
+.m-05,
+.mx-05,
+.mt-05 {
+    margin-top: 0.5em;
+}
+.m-05,
+.mx-05,
+.mb-05 {
+    margin-bottom: 0.5em;
+}
+
+.m-1,
+.mx-1,
+.ml-1 {
+    margin-left: 1em;
+}
+.m-1,
+.mx-1,
+.mr-1 {
+    margin-right: 1em;
+}
+.m-1,
+.mx-1,
+.mt-1 {
+    margin-top: 1em;
+}
+.m-1,
+.mx-1,
+.mb-1 {
+    margin-bottom: 1em;
+}
+
+.p-025,
+.px-025,
+.pl-025 {
+    padding-left: 0.25em;
+}
+.p-025,
+.px-025,
+.pr-025 {
+    padding-right: 0.25em;
+}
+.p-025,
+.px-025,
+.pt-025 {
+    padding-top: 0.25em;
+}
+.p-025,
+.px-025,
+.pb-025 {
+    padding-bottom: 0.25em;
+}
+
+.p-05,
+.px-05,
+.pl-05 {
+    padding-left: 0.5em;
+}
+.p-05,
+.px-05,
+.pr-05 {
+    padding-right: 0.5em;
+}
+.p-05,
+.px-05,
+.pt-05 {
+    padding-top: 0.5em;
+}
+.p-05,
+.px-05,
+.pb-05 {
+    padding-bottom: 0.5em;
+}
+
+.p-1,
+.px-1,
+.pl-1 {
+    padding-left: 1em;
+}
+.p-1,
+.px-1,
+.pr-1 {
+    padding-right: 1em;
+}
+.p-1,
+.px-1,
+.pt-1 {
+    padding-top: 1em;
+}
+.p-1,
+.px-1,
+.pb-1 {
+    padding-bottom: 1em;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+/* flex.css ----------------------------------------------------------------- */
+
+.flex {
+    display: flex;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-x-start {
+    justify-content: flex-start;
+}
+.flex-x-center {
+    justify-content: center;
+}
+.flex-x-end {
+    justify-content: flex-end;
+}
+.flex-x-justify {
+    justify-content: space-between;
+}
+
+.flex-y-start {
+    align-items: flex-start;
+}
+.flex-y-center {
+    align-items: center;
+}
+.flex-y-end {
+    align-items: flex-end;
+}
+.flex-y-stretch {
+    align-items: stretch;
+}
+
+/* text.css ----------------------------------------------------------------- */
+
+.fz-150 {
+    font-size: 1.5em;
+}
+.fz-140 {
+    font-size: 1.4em;
+}
+.fz-130 {
+    font-size: 1.3em;
+}
+.fz-120 {
+    font-size: 1.2em;
+}
+.fz-110 {
+    font-size: 1.1em;
+}
+.fz-100 {
+    font-size: 1em;
+}
+.fz-90 {
+    font-size: 0.9em;
+}
+.fz-80 {
+    font-size: 0.8em;
+}
+.fz-70 {
+    font-size: 0.7em;
+}
+
+.text-left {
+    text-align: left;
+}
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+.text-justify {
+    text-align: justify;
+}
+
+.bold {
+    font-weight: bold;
+}
+.italic {
+    font-style: italic;
+}
+.underline {
+    text-decoration: underline;
+}
+
+/* theme.css ---------------------------------------------------------------- */
+
+#root {
+    box-sizing: border-box;
+    font-size: 1.2em;
+}
+
+.fixed-bottom {
+    position: fixed;
+    bottom: 0;
+}
+
+/* shame.css ---------------------------------------------------------------- */

@@ -1,0 +1,49 @@
+{
+  "name": "language-decoder",
+  "version": "0.0.1",
+  "private": true,
+  "main": ".webpack/main",
+  "scripts": {
+    "all": "run-s format lint test make",
+    "format": "prettier --write src",
+    "lint": "eslint --ext .ts,.tsx src",
+    "make": "electron-forge make",
+    "package": "electron-forge package",
+    "publish": "electron-forge publish",
+    "start": "electron-forge start",
+    "test": "ts-mocha 'src/**/*.test.ts'"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.64",
+    "@electron-forge/maker-deb": "^6.0.0-beta.64",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.64",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.64",
+    "@electron-forge/maker-zip": "^6.0.0-beta.64",
+    "@electron-forge/plugin-webpack": "^6.0.0-beta.64",
+    "@trivago/prettier-plugin-sort-imports": "^3.3.0",
+    "@types/mocha": "^9.1.1",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "@typescript-eslint/eslint-plugin": "^5.30.7",
+    "@typescript-eslint/parser": "^5.30.7",
+    "@vercel/webpack-asset-relocator-loader": "^1.7.3",
+    "css-loader": "^6.7.1",
+    "electron": "19.0.8",
+    "eslint": "^8.20.0",
+    "eslint-plugin-import": "^2.26.0",
+    "fork-ts-checker-webpack-plugin": "^7.2.13",
+    "mocha": "^10.0.0",
+    "node-loader": "^2.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.7.1",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.3.1",
+    "ts-mocha": "^10.0.0",
+    "typescript": "~4.5.4"
+  }
+}

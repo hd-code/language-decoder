@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Language Decoder</title>
+    </head>
+    <body>
+        <div id="root">
+            <style>
+                html,
+                body,
+                #root {
+                    height: 100%;
+                }
+                #root {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+                #root::after {
+                    animation: rotate 1s linear infinite;
+                    border: 0.5em solid;
+                    border-color: #888 #000;
+                    border-radius: 50%;
+                    content: "";
+                    display: block;
+                    height: 0;
+                    width: 25%;
+                    padding-bottom: 25%;
+                }
+                @keyframes rotate {
+                    from {
+                        transform: rotate(0);
+                    }
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+            </style>
+        </div>
+    </body>
+</html>
