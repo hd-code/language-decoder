@@ -1,4 +1,4 @@
-import { Api } from "./domain/Api";
+import { Api } from "./domain";
 
 export {};
 

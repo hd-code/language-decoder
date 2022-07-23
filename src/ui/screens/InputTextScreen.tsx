@@ -1,10 +1,10 @@
 import * as React from "react";
 
-import { Language, languageLabelsEnglish } from "../../domain/Language";
-import { Text } from "../../domain/Text";
+import { Api, Language, languageLabelsEnglish, Text } from "../../domain";
 import { Select } from "../components";
 
 interface InputTextScreenProps {
+    api: Api;
     onCreateText: (t: Text, l: Language) => void;
 }
 

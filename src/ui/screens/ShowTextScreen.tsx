@@ -1,10 +1,16 @@
 import * as React from "react";
 
-import { Language, languageLabelsEnglish } from "../../domain/Language";
-import { Text, tokenize } from "../../domain/Text";
+import {
+    Api,
+    Language,
+    Text,
+    languageLabelsEnglish,
+    tokenize,
+} from "../../domain";
 import { Select } from "../components";
 
 interface ShowTextScreenProps {
+    api: Api;
     text: Text;
     lang: Language;
     setLang: React.Dispatch<Language>;

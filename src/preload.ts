@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 
-import { Api } from "./domain/Api";
+import { Api } from "./domain";
 
 const api: Api = {
     translate: (word, from, to) =>

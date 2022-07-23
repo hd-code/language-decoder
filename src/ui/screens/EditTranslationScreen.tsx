@@ -1,11 +1,18 @@
 import * as React from "react";
 
-import { Language, languageLabelsEnglish } from "../../domain/Language";
-import { Text, getTokens, tokenize } from "../../domain/Text";
+import {
+    Api,
+    Language,
+    Text,
+    getTokens,
+    languageLabelsEnglish,
+    tokenize,
+} from "../../domain";
 import { deepClone } from "../../util/clone";
 import { Select } from "../components";
 
 interface EditTranslationScreenProps {
+    api: Api;
     text: Text;
     setText: React.Dispatch<Text>;
     lang: Language;
@@ -15,6 +22,7 @@ interface EditTranslationScreenProps {
 type tokenMap = { [token: string]: string[] };
 
 export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
+    api,
     text,
     setText,
     lang,
@@ -35,7 +43,7 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
         let result = { ...dict };
 
         tokens.forEach((token) => {
-            window.api.translate(token, text.language, lang).then((words) => {
+            api.translate(token, text.language, lang).then((words) => {
                 console.log(result);
                 result = { ...result, [token]: words };
                 count++;
