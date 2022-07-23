@@ -1,8 +1,15 @@
 import { ipcMain } from "electron";
 
+import { Translator } from "./data/Translator";
 import { Language } from "./domain";
 
+// -----------------------------------------------------------------------------
+
+const translator = new Translator();
+
 export function registerHandlers() {
+    translator.init("/Users/hd/dev/language-decoder/data/");
+
     ipcMain.handle("translate", handleTranslate);
 }
 
@@ -14,8 +21,7 @@ async function handleTranslate(
     from: Language,
     to: Language,
 ) {
-    await sleep(100);
-    return tmpTrans[word as keyof typeof tmpTrans] ?? [];
+    return translator.translate(word, from, to);
 }
 
 // -----------------------------------------------------------------------------
