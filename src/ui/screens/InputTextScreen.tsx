@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { Api, Language, Text, languageLabelsEnglish } from "../../domain";
-import { Select } from "../components";
 
 interface InputTextScreenProps {
     api: Api;
@@ -11,52 +10,69 @@ interface InputTextScreenProps {
 export const InputTextScreen: React.FC<InputTextScreenProps> = ({
     onCreateText,
 }) => {
-    const [author, setAuthor] = React.useState("J.R.R. Tolkien");
-    const [title, setTitle] = React.useState("The Lord of the Rings");
-    const [text, setText] = React.useState(
-        "In a hole in the ground...\nThere was a hobbit...",
-    );
+    const [form, setForm] = React.useState({
+        author: "J.R.R. Tolkien",
+        title: "The Lord of the Rings",
+        text: "In a hole in the ground...\nThere was a hobbit...",
+        from: Language.english,
+        to: Language.german,
+    });
 
-    const [from, setFrom] = React.useState(Language.english);
-    const [to, setTo] = React.useState(Language.german);
+    const onChange = (
+        event: React.ChangeEvent<
+            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+        >,
+    ) => {
+        setForm({
+            ...form,
+            [event.target.name]: event.target.value,
+        });
+    };
 
-    const submit = () => {
+    const onSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
         const t: Text = {
-            author,
-            text: `${title}\n${text}`,
-            language: from,
+            author: form.author,
+            text: `${form.title}\n${form.text}`,
+            language: form.from,
             translations: {},
         };
-        onCreateText(t, to);
+        onCreateText(t, form.to);
     };
 
     return (
-        <>
+        <form onSubmit={onSubmit}>
             <label className="block">
                 Author:
                 <input
                     type="text"
-                    value={author}
-                    onChange={(event) => setAuthor(event.target.value)}
+                    name="author"
+                    value={form.author}
+                    onChange={onChange}
                 />
             </label>
 
             <label className="block">
                 From:
-                <Select options={langOpts} selected={from} onChange={setFrom} />
+                <select name="from" value={form.from} onChange={onChange}>
+                    {langOpts}
+                </select>
             </label>
 
             <label className="block">
                 To:
-                <Select options={langOpts} selected={to} onChange={setTo} />
+                <select name="to" value={form.to} onChange={onChange}>
+                    {langOpts}
+                </select>
             </label>
 
             <label className="block">
                 Title:
                 <input
                     type="text"
-                    value={title}
-                    onChange={(event) => setTitle(event.target.value)}
+                    name="title"
+                    value={form.title}
+                    onChange={onChange}
                 />
             </label>
 
@@ -65,20 +81,21 @@ export const InputTextScreen: React.FC<InputTextScreenProps> = ({
                 <textarea
                     className="block w-100"
                     rows={15}
-                    value={text}
-                    onChange={(event) => setText(event.target.value)}
+                    value={form.text}
+                    onChange={onChange}
                 />
             </label>
 
-            <button onClick={submit}>Translate</button>
-        </>
+            <button type="submit">Translate</button>
+        </form>
     );
 };
 
 const langOpts = Object.keys(Language).map((lang) => {
     const value = Language[lang as keyof typeof Language];
-    return {
-        label: languageLabelsEnglish[value],
-        value,
-    };
+    return (
+        <option key={value} value={value}>
+            {languageLabelsEnglish[value]}
+        </option>
+    );
 });
