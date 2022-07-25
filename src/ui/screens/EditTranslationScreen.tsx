@@ -32,7 +32,7 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
     const [title, ...tex] = lines;
 
     const [form, setForm] = React.useState(() => {
-        let result: { [name: string]: string } = {};
+        const result: { [name: string]: string } = {};
         lines.forEach((line, i) => {
             line.forEach((_, j) => {
                 result[`${i}-${j}`] = text.translations[lang]?.[i]?.[j] ?? "";
@@ -49,9 +49,9 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
     const onSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
-        let translation = deepClone(lines);
+        const translation = deepClone(lines);
         for (const name in form) {
-            const [i, j] = name.split("-").map(n => parseInt(n));
+            const [i, j] = name.split("-").map((n) => parseInt(n));
             translation[i][j] = form[name];
         }
 
@@ -72,7 +72,7 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
     });
     React.useEffect(() => {
         let count = 0;
-        let result = deepClone(dict);
+        const result = deepClone(dict);
 
         Object.keys(dict).forEach((token) => {
             api.translate(token, text.language, lang).then((words) => {
@@ -81,7 +81,7 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
                 if (count === Object.keys(dict).length) {
                     const tmp = deepClone(form);
                     for (const name in tmp) {
-                        const [i, j] = name.split("-").map(n => parseInt(n));
+                        const [i, j] = name.split("-").map((n) => parseInt(n));
                         const token = tokens[i][j];
                         if (tmp[name] === "" && result[token]?.length >= 1) {
                             tmp[name] = result[token][0];
