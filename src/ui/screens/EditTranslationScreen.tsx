@@ -26,27 +26,39 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
     lang,
     setEdit,
 }) => {
-    const [translation, setTranslation] = React.useState<string[][]>(() => {
-        return (
-            deepClone(text.translations[lang]) ??
-            tokenize(text.text).map((line) => line.map(() => null))
-        );
-    });
-    const setTrans = (word: string, i: number, j: number) => {
-        let trans = deepClone(translation);
-        trans[i][j] = word;
-        setTranslation(trans);
-    };
-    const addTransToEmpty = (dict: tokenMap) => {
-        const tmp = deepClone(translation);
-        tokenize(text.text, true, true).forEach((line, i) => {
-            line.forEach((token, j) => {
-                if (tmp[i][j] === null && dict[token].length >= 1) {
-                    tmp[i][j] = dict[token][0];
-                }
+    const tokens = tokenize(text.text, true, true);
+
+    const lines = tokenize(text.text);
+    const [title, ...tex] = lines;
+
+    const [form, setForm] = React.useState(() => {
+        let result: { [name: string]: string } = {};
+        lines.forEach((line, i) => {
+            line.forEach((_, j) => {
+                result[`${i}-${j}`] = text.translations[lang]?.[i]?.[j] ?? "";
             });
         });
-        setTranslation(tmp);
+        return result;
+    });
+    const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setForm({
+            ...form,
+            [event.target.name]: event.target.value,
+        });
+    };
+    const onSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+
+        let translation = deepClone(lines);
+        for (const name in form) {
+            const [i, j] = name.split("-").map(n => parseInt(n));
+            translation[i][j] = form[name];
+        }
+
+        const t = deepClone(text);
+        t.translations[lang] = translation;
+        setText(t);
+        setEdit(false);
     };
 
     const [dict, setDict] = React.useState<tokenMap>(() => {
@@ -58,26 +70,30 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
             });
         return result;
     });
-
     React.useEffect(() => {
-        const tokens = Object.keys(dict);
-        const nTokens = tokens.length;
         let count = 0;
         let result = deepClone(dict);
 
-        tokens.forEach((token) => {
+        Object.keys(dict).forEach((token) => {
             api.translate(token, text.language, lang).then((words) => {
                 result[token] = words;
                 count++;
-                if (count === nTokens) {
+                if (count === Object.keys(dict).length) {
+                    const tmp = deepClone(form);
+                    for (const name in tmp) {
+                        const [i, j] = name.split("-").map(n => parseInt(n));
+                        const token = tokens[i][j];
+                        if (tmp[name] === "" && result[token]?.length >= 1) {
+                            tmp[name] = result[token][0];
+                        }
+                    }
+
                     setDict(result);
-                    addTransToEmpty(result);
+                    setForm(tmp);
                 }
             });
         });
     }, []);
-
-    const [title, ...tex] = tokenize(text.text);
 
     const makeOptions = (word: string, trans?: string) => {
         const opts = dict[tokenize(word, true, true)[0][0]] ?? [];
@@ -87,15 +103,8 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
         return opts;
     };
 
-    const save = () => {
-        const t = deepClone(text);
-        t.translations[lang] = translation;
-        setText(t);
-        setEdit(false);
-    };
-
     return (
-        <>
+        <form onSubmit={onSubmit}>
             <p className="fz-80 mb-1 italic text-center">
                 {languageLabelsEnglish[text.language]} text
                 {text.author && ` by ${text.author}`}
@@ -106,10 +115,9 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
                     <span key={i} className="mr-025">
                         {token} <br />
                         <select
-                            onChange={(event) =>
-                                setTrans(event.target.value, 0, i)
-                            }
-                            value={translation?.[0][i] ?? ""}
+                            name={`0-${i}`}
+                            value={form[`0-${i}`]}
+                            onChange={onChange}
                         >
                             {makeOptions(
                                 token,
@@ -130,10 +138,9 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
                         <span key={j} className="mr-025">
                             {token} <br />
                             <select
-                                onChange={(event) =>
-                                    setTrans(event.target.value, i + 1, j)
-                                }
-                                value={translation?.[i + 1][j] ?? ""}
+                                name={`${i + 1}-${j}`}
+                                value={form[`${i + 1}-${j}`]}
+                                onChange={onChange}
                             >
                                 {makeOptions(
                                     token,
@@ -150,8 +157,8 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
             ))}
 
             <div className="text-right mt-05">
-                <button onClick={() => save()}>Save</button>
+                <button type="submit">Save</button>
             </div>
-        </>
+        </form>
     );
 };
