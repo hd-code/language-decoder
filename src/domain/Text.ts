@@ -7,14 +7,8 @@ import { Language } from "./Language";
 export type Text = {
     author?: string;
     language: Language;
-    title: string;
-    text: string;
-    translations: {
-        [lang in Language]?: {
-            title: string[];
-            text: string[][];
-        };
-    };
+    text: string; // 0th line is the title
+    translations: { [lang in Language]?: string[][] };
 };
 
 // TODO: check nested structures
@@ -29,31 +23,13 @@ export type Text = {
 // }
 
 export function getTokens(t: Text): string[] {
-    const tokens = tokenize(t.title, true, true)
-        .flat()
-        .concat(tokenize(t.text, true, true).flat());
+    const tokens = tokenize(t.text, true, true).flat();
     const tokenMap: { [token: string]: boolean } = {};
     tokens.forEach((token) => {
         tokenMap[token] = true;
     });
     return Object.keys(tokenMap);
 }
-
-export const sampleText: Text = {
-    author: "J.R.R. Tolkien",
-    language: Language.english,
-    title: "The Lord of the Rings",
-    text: "In a hole in the ground...\nThere was a hobbit...",
-    translations: {
-        de: {
-            title: ["der", "Herr", "von", "der", "Ringe"],
-            text: [
-                ["in", "einem", "Loch", "in", "dem", "Boden"],
-                ["da", "war", "ein", "Hobbit"],
-            ],
-        },
-    },
-};
 
 // -----------------------------------------------------------------------------
 

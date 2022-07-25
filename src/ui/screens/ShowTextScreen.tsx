@@ -23,6 +23,8 @@ export const ShowTextScreen: React.FC<ShowTextScreenProps> = ({
     setLang,
     setEdit,
 }) => {
+    const [title, ...tex] = tokenize(text.text);
+
     return (
         <>
             <p className="fz-80 mb-1 italic text-center">
@@ -31,23 +33,21 @@ export const ShowTextScreen: React.FC<ShowTextScreenProps> = ({
             </p>
 
             <h1 className="flex flex-wrap flex-x-center mb-1 fz-120 text-center">
-                {tokenize(text.title)
-                    .flat()
-                    .map((token, i) => (
-                        <span key={i} className="mr-025">
-                            {token} <br />
-                            <small>{text.translations[lang]?.title[i]}</small>
-                            <br />
-                        </span>
-                    ))}
+                {title.map((token, i) => (
+                    <span key={i} className="mr-025">
+                        {token} <br />
+                        <small>{text.translations[lang]?.[0][i]}</small>
+                        <br />
+                    </span>
+                ))}
             </h1>
 
-            {tokenize(text.text).map((line, i) => (
+            {tex.map((line, i) => (
                 <p key={i} className="flex flex-wrap mb-05 text-center">
                     {line.map((token, j) => (
                         <span key={j} className="mr-025">
                             {token} <br />
-                            <small>{text.translations[lang]?.text[i][j]}</small>
+                            <small>{text.translations[lang]?.[i + 1][j]}</small>
                             <br />
                         </span>
                     ))}

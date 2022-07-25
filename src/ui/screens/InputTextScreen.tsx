@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Api, Language, languageLabelsEnglish, Text } from "../../domain";
+import { Api, Language, Text, languageLabelsEnglish } from "../../domain";
 import { Select } from "../components";
 
 interface InputTextScreenProps {
@@ -23,8 +23,7 @@ export const InputTextScreen: React.FC<InputTextScreenProps> = ({
     const submit = () => {
         const t: Text = {
             author,
-            title,
-            text,
+            text: `${title}\n${text}`,
             language: from,
             translations: {},
         };
