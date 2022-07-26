@@ -1,7 +1,5 @@
 import { Language } from "./Language";
 
-// import { hasKey, isEnum, isObject, isString } from "../util/typeguards";
-
 // -----------------------------------------------------------------------------
 
 export type Text = {
@@ -10,26 +8,6 @@ export type Text = {
     text: string; // 0th line is the title
     translations: { [lang in Language]?: string[][] };
 };
-
-// TODO: check nested structures
-// export function isText(t: unknown): t is Text {
-//     return (
-//         // @ts-ignore
-//         hasKey(t, "language", (lang: unknown) => isEnum(lang, Language)) &&
-//         hasKey(t, "title", isString) &&
-//         hasKey(t, "text", isString) &&
-//         hasKey(t, "translations", isObject)
-//     );
-// }
-
-export function getTokens(t: Text): string[] {
-    const tokens = tokenize(t.text, true, true).flat();
-    const tokenMap: { [token: string]: boolean } = {};
-    tokens.forEach((token) => {
-        tokenMap[token] = true;
-    });
-    return Object.keys(tokenMap);
-}
 
 // -----------------------------------------------------------------------------
 
