@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import { Api, Language, Text, languageLabelsEnglish } from "../../domain";
 
 interface InputTextScreenProps {
@@ -81,6 +80,7 @@ export const InputTextScreen: React.FC<InputTextScreenProps> = ({
                 <textarea
                     className="block w-100"
                     rows={15}
+                    name="text"
                     value={form.text}
                     onChange={onChange}
                 />

@@ -1,5 +1,4 @@
 import * as assert from "assert/strict";
-
 import { tokenize } from "./Text";
 
 describe("Text", () => {

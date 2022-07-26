@@ -1,5 +1,5 @@
 import * as React from "react";
-
+import { deepClone } from "../../../lib/clone";
 import {
     Api,
     Language,
@@ -7,7 +7,6 @@ import {
     languageLabelsEnglish,
     tokenize,
 } from "../../domain";
-import { deepClone } from "../../util/clone";
 
 interface EditTranslationScreenProps {
     api: Api;

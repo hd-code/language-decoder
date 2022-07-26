@@ -1,7 +1,6 @@
 import * as assert from "assert/strict";
 import * as fs from "fs";
 import * as path from "path";
-
 import { FileStorage } from "./FileStorage";
 
 describe(FileStorage.name, () => {
@@ -9,7 +8,11 @@ describe(FileStorage.name, () => {
     const cleanUp = () => {
         try {
             fs.rmSync(filepath);
-        } catch (err) {}
+        } catch (err) {
+            if (err.code !== "ENOENT") {
+                throw err;
+            }
+        }
     };
 
     describe("init", () => {

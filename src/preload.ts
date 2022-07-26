@@ -1,10 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge } from "electron";
+import { createApi } from "./ipc/invoker";
 
-import { Api } from "./domain";
-
-const api: Api = {
-    translate: (word, from, to) =>
-        ipcRenderer.invoke("translate", word, from, to),
-};
-
-contextBridge.exposeInMainWorld("api", api);
+contextBridge.exposeInMainWorld("api", createApi());

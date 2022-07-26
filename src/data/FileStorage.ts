@@ -1,8 +1,6 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 
-import { isObject } from "../util/typeguards";
-
 export class FileStorage<T> {
     private filepath: string;
     private store: { [key: string]: T } = {};
@@ -13,7 +11,11 @@ export class FileStorage<T> {
         try {
             const buffer = await fs.readFile(this.filepath);
             const data = JSON.parse(buffer.toString());
-            if (!isObject<typeof this.store>(data)) {
+            if (
+                typeof data !== "object" ||
+                data == null ||
+                data instanceof Array
+            ) {
                 throw `${filepath} is not a known file format`;
             }
             this.store = data;

@@ -1,7 +1,5 @@
 import * as React from "react";
-
 import { Language, Text } from "../domain";
-
 import {
     EditTranslationScreen,
     InputTextScreen,

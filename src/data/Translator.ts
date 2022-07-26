@@ -1,8 +1,7 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-
+import { translate } from "../../lib/translate";
 import { Language } from "../domain";
-
 import { FileStorage } from "./FileStorage";
 
 export class Translator {
@@ -26,6 +25,13 @@ export class Translator {
             await this.fileStorage.init(path.join(this.dictDirPath, filename));
         }
 
-        return this.fileStorage.get(word) ?? [];
+        const words = this.fileStorage.get(word);
+        if (words !== null) {
+            return words;
+        }
+
+        const newWords = await translate(word, from, to);
+        this.fileStorage.set(word, newWords);
+        return newWords;
     }
 }

@@ -9,6 +9,7 @@
     "lint": "eslint --ext .ts,.tsx src",
     "make": "electron-forge make",
     "package": "electron-forge package",
+    "postinstall": "extract-zip $PWD/lib/translate.js.zip $PWD/lib",
     "publish": "electron-forge publish",
     "start": "electron-forge start",
     "test": "ts-mocha 'src/**/*.test.ts'"
@@ -33,9 +34,10 @@
     "@typescript-eslint/parser": "^5.31.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "css-loader": "^6.7.1",
-    "electron": "19.0.8",
+    "electron": "^19.0.9",
     "eslint": "^8.20.0",
     "eslint-plugin-import": "^2.26.0",
+    "extract-zip": "^2.0.1",
     "fork-ts-checker-webpack-plugin": "^7.2.13",
     "mocha": "^10.0.0",
     "node-loader": "^2.0.0",
@@ -44,6 +46,6 @@
     "style-loader": "^3.3.1",
     "ts-loader": "^9.3.1",
     "ts-mocha": "^10.0.0",
-    "typescript": "~4.5.4"
+    "typescript": "^4.7.4"
   }
 }
