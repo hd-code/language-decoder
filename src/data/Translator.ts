@@ -6,7 +6,7 @@ import { FileStorage } from "./FileStorage";
 
 export class Translator {
     private dictDirPath: string;
-    private fileStorage = new FileStorage<string[]>();
+    private fileStorage: FileStorage<string[]>;
     private filename: string;
 
     async init(dictDirPath: string) {
@@ -22,6 +22,7 @@ export class Translator {
         const filename = `${from}-${to}.json`;
         if (this.filename !== filename) {
             this.filename = filename;
+            this.fileStorage = new FileStorage();
             await this.fileStorage.init(path.join(this.dictDirPath, filename));
         }
 

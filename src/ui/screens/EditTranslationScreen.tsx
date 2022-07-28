@@ -41,7 +41,6 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
     });
     const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setForm({
-            ...form,
             [event.target.name]: event.target.value,
         });
     };
@@ -59,40 +58,39 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
         setText(t);
         setEdit(false);
     };
+    const onAbort = () => {
+        setEdit(false);
+    };
 
-    const [dict, setDict] = React.useState<tokenMap>(() => {
-        const result: tokenMap = {};
-        tokenize(text.text, true, true)
-            .flat()
-            .forEach((token) => {
-                result[token] = [];
-            });
-        return result;
-    });
+    const [dict, setDict] = React.useState<tokenMap>({});
     React.useEffect(() => {
+        let newDict: tokenMap = {};
+        tokens.flat().forEach((token) => {
+            newDict[token] = [];
+        });
+        const nTokens = Object.keys(newDict).length;
         let count = 0;
-        const result = deepClone(dict);
 
-        Object.keys(dict).forEach((token) => {
+        Object.keys(newDict).forEach((token) => {
             api.translate(token, text.language, lang).then((words) => {
-                result[token] = words;
-                count++;
-                if (count === Object.keys(dict).length) {
-                    const tmp = deepClone(form);
-                    for (const name in tmp) {
-                        const [i, j] = name.split("-").map((n) => parseInt(n));
+                newDict[token] = words;
+                if (++count >= nTokens) {
+                    for (const name in form) {
+                        if (form[name] !== "") continue;
+                        const [i, j] = name.split("-").map((x) => parseInt(x));
                         const token = tokens[i][j];
-                        if (tmp[name] === "" && result[token]?.length >= 1) {
-                            tmp[name] = result[token][0];
+                        if (newDict[token]?.length >= 1) {
+                            setForm((prev) => ({
+                                ...prev,
+                                [name]: newDict[token][0],
+                            }));
                         }
                     }
-
-                    setDict(result);
-                    setForm(tmp);
+                    setDict(newDict);
                 }
             });
         });
-    }, []);
+    }, [lang]);
 
     const makeOptions = (word: string, trans?: string) => {
         const opts = dict[tokenize(word, true, true)[0][0]] ?? [];
@@ -156,6 +154,9 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
             ))}
 
             <div className="text-right mt-05">
+                <button onClick={onAbort} className="mr-025">
+                    Abort
+                </button>
                 <button type="submit">Save</button>
             </div>
         </form>

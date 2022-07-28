@@ -6,7 +6,6 @@ import {
     languageLabelsEnglish,
     tokenize,
 } from "../../domain";
-import { Select } from "../components";
 
 interface ShowTextScreenProps {
     api: Api;
@@ -17,12 +16,25 @@ interface ShowTextScreenProps {
 }
 
 export const ShowTextScreen: React.FC<ShowTextScreenProps> = ({
+    api,
     text,
     lang,
     setLang,
     setEdit,
 }) => {
     const [title, ...tex] = tokenize(text.text);
+
+    const translationsHave = Object.keys(text.translations) as Language[];
+    const translationsToAdd = Object.values(Language).filter(
+        (lang) => lang !== text.language && !translationsHave.includes(lang),
+    );
+
+    const onSave = async () => {
+        const err = await api.saveText(text);
+        if (err) {
+            console.error(err)
+        }
+    }
 
     return (
         <>
@@ -32,24 +44,12 @@ export const ShowTextScreen: React.FC<ShowTextScreenProps> = ({
             </p>
 
             <h1 className="flex flex-wrap flex-x-center mb-1 fz-120 text-center">
-                {title.map((token, i) => (
-                    <span key={i} className="mr-025">
-                        {token} <br />
-                        <small>{text.translations[lang]?.[0][i]}</small>
-                        <br />
-                    </span>
-                ))}
+                {textLine(title, text.translations[lang]?.[0] ?? [])}
             </h1>
 
             {tex.map((line, i) => (
                 <p key={i} className="flex flex-wrap mb-05 text-center">
-                    {line.map((token, j) => (
-                        <span key={j} className="mr-025">
-                            {token} <br />
-                            <small>{text.translations[lang]?.[i + 1][j]}</small>
-                            <br />
-                        </span>
-                    ))}
+                    {textLine(line, text.translations[lang]?.[i + 1] ?? [])}
                 </p>
             ))}
 
@@ -61,24 +61,48 @@ export const ShowTextScreen: React.FC<ShowTextScreenProps> = ({
 
                 <div>
                     Translation:
-                    <Select
-                        options={Object.keys(text.translations).map((l) => ({
-                            label: languageLabelsEnglish[l as Language],
-                            value: l as Language,
-                        }))}
-                        selected={lang}
-                        onChange={setLang}
+                    <select
                         className="mr-025"
-                    />
-                    {/* <button className="mr-025">Add</button> */}
-                    <button onClick={() => setEdit(true)}>Edit</button>
+                        value={lang}
+                        onChange={(ev) => setLang(ev.target.value as Language)}
+                    >
+                        {translationsHave.map((lang) => (
+                            <option key={lang} value={lang}>
+                                {languageLabelsEnglish[lang]}
+                            </option>
+                        ))}
+                        <option disabled={true}>---</option>
+                        {translationsToAdd.map((lang) => (
+                            <option key={lang} value={lang}>
+                                + {languageLabelsEnglish[lang]}
+                            </option>
+                        ))}
+                    </select>
+                    <button onClick={() => setEdit(true)}>
+                        {translationsHave.includes(lang) ? "Edit" : "Add"}
+                    </button>
                 </div>
 
                 <div>
                     <button className="mr-025">Export</button>
-                    <button>Save</button>
+                    <button onClick={() => onSave()}>Save</button>
                 </div>
             </div>
         </>
     );
 };
+
+function textLine(tokens: string[], translations: string[]) {
+    return tokens.map((token, j) => (
+        <span key={j} className="mr-025">
+            {token}
+            {translations[j] && (
+                <>
+                    <br />
+                    <small>{translations[j]}</small>
+                    <br />
+                </>
+            )}
+        </span>
+    ));
+}
