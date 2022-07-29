@@ -1,13 +1,21 @@
 {
   "name": "language-decoder",
   "version": "0.0.1",
+  "author": {
+    "name": "Hannes Dröse",
+    "email": "dom.hd@gmx-topmail.de",
+    "url": "https://hd-code.github.io/"
+  },
+  "description": "An app to create word-by-word translations for a text.",
   "private": true,
   "main": ".webpack/main",
   "scripts": {
     "all": "run-s format lint test make",
     "format": "prettier --write src",
     "lint": "eslint --ext .ts,.tsx src",
-    "make": "electron-forge make",
+    "make": "run-s -c make:mac make:win",
+    "make:mac": "electron-forge make --platform darwin",
+    "make:win": "electron-forge make --platform win32",
     "package": "electron-forge package",
     "postinstall": "extract-zip $PWD/lib/translate.js.zip $PWD/lib",
     "publish": "electron-forge publish",
@@ -21,8 +29,7 @@
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.64",
-    "@electron-forge/maker-deb": "^6.0.0-beta.64",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.64",
+    "@electron-forge/maker-dmg": "^6.0.0-beta.65",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.64",
     "@electron-forge/maker-zip": "^6.0.0-beta.64",
     "@electron-forge/plugin-webpack": "^6.0.0-beta.64",
@@ -34,7 +41,7 @@
     "@typescript-eslint/parser": "^5.31.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "css-loader": "^6.7.1",
-    "electron": "^19.0.9",
+    "electron": "^19.0.10",
     "eslint": "^8.20.0",
     "eslint-plugin-import": "^2.26.0",
     "extract-zip": "^2.0.1",

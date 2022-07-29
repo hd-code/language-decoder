@@ -64,7 +64,7 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
 
     const [dict, setDict] = React.useState<tokenMap>({});
     React.useEffect(() => {
-        let newDict: tokenMap = {};
+        const newDict: tokenMap = {};
         tokens.flat().forEach((token) => {
             newDict[token] = [];
         });
