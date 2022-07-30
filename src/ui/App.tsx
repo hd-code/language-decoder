@@ -24,6 +24,6 @@ export const App: React.FC = () => {
     ) : edit ? (
         <EditTranslationScreen {...{ api, text, setText, lang, setEdit }} />
     ) : (
-        <ShowTextScreen {...{ api, text, lang, setLang, setEdit }} />
+        <ShowTextScreen {...{ api, text, setText, lang, setLang, setEdit }} />
     );
 };

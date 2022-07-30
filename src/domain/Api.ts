@@ -8,6 +8,8 @@ export interface Api {
         to: Language,
     ) => Promise<string[]>;
 
-    saveText: (text: Text) => Promise<Error|null>;
-    loadText: () => Promise<Text>;
+    saveText: (text: Text) => Promise<Error | null>;
+    loadText: () => Promise<Text | null>;
+
+    exportPDF: (text: Text) => Promise<Error | null>;
 }

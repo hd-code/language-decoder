@@ -47,7 +47,7 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
     const onSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
-        const translation = deepClone(lines);
+        let translation = deepClone(lines);
         for (const name in form) {
             const [i, j] = name.split("-").map((n) => parseInt(n));
             translation[i][j] = form[name];

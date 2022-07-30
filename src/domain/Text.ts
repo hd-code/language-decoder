@@ -9,6 +9,11 @@ export type Text = {
     translations: { [lang in Language]?: string[][] };
 };
 
+// TODO: implement type guard
+export function isText(text: unknown): text is Text {
+    return true;
+}
+
 // -----------------------------------------------------------------------------
 
 export function tokenize(

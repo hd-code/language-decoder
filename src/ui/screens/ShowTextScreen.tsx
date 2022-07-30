@@ -10,6 +10,7 @@ import {
 interface ShowTextScreenProps {
     api: Api;
     text: Text;
+    setText: React.Dispatch<Text>;
     lang: Language;
     setLang: React.Dispatch<Language>;
     setEdit: React.Dispatch<boolean>;
@@ -18,6 +19,7 @@ interface ShowTextScreenProps {
 export const ShowTextScreen: React.FC<ShowTextScreenProps> = ({
     api,
     text,
+    setText,
     lang,
     setLang,
     setEdit,
@@ -29,12 +31,27 @@ export const ShowTextScreen: React.FC<ShowTextScreenProps> = ({
         (lang) => lang !== text.language && !translationsHave.includes(lang),
     );
 
+    console.log(text)
+
+    const onCreate = () => {
+        setText(null);
+    };
+    const onLoad = async () => {
+        const t = await api.loadText();
+        if (t === null) return;
+        const newLang = Object.keys(t.translations)[0] as Language;
+        setText(t);
+        setLang(newLang);
+    };
     const onSave = async () => {
         const err = await api.saveText(text);
         if (err) {
-            console.error(err)
+            console.error(err);
         }
-    }
+    };
+    const onExport = async () => {
+        await api.exportPDF(text);
+    };
 
     return (
         <>
@@ -53,10 +70,12 @@ export const ShowTextScreen: React.FC<ShowTextScreenProps> = ({
                 </p>
             ))}
 
-            <div className="flex flex-x-justify fixed-bottom w-100 p-05">
+            <div className="flex flex-x-justify fixed-bottom w-100 p-05 no-print">
                 <div>
-                    <button className="mr-025">New</button>
-                    <button>Open</button>
+                    <button onClick={onCreate} className="mr-025">
+                        New
+                    </button>
+                    <button onClick={onLoad}>Open</button>
                 </div>
 
                 <div>
@@ -84,8 +103,8 @@ export const ShowTextScreen: React.FC<ShowTextScreenProps> = ({
                 </div>
 
                 <div>
-                    <button className="mr-025">Export</button>
-                    <button onClick={() => onSave()}>Save</button>
+                    <button onClick={onExport} className="mr-025">Export</button>
+                    <button onClick={onSave}>Save</button>
                 </div>
             </div>
         </>
