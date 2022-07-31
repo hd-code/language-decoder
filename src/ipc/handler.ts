@@ -8,7 +8,7 @@ import {
     ipcMain,
 } from "electron";
 import { Translator } from "../data/Translator";
-import { isText } from "../domain";
+import { Text, isText } from "../domain";
 
 export function registerHandlers(dataDir: string) {
     const translator = new Translator();
@@ -18,8 +18,12 @@ export function registerHandlers(dataDir: string) {
         translator.translate(word, from, to),
     );
 
-    ipcMain.handle("text_save", async (_, text) => {
+    ipcMain.handle("text_save", async (_, text: Text) => {
+        const filename =
+            (text.author ? text.author + " – " : "") + text.text.split("\n")[0];
+
         const { canceled, filePath } = await dialog.showSaveDialog({
+            defaultPath: filename,
             filters: [fileFilter],
             properties: ["createDirectory"],
         });
@@ -54,7 +58,7 @@ export function registerHandlers(dataDir: string) {
         }
     });
 
-    ipcMain.handle("text_export_pdf", async (_, text) => {
+    ipcMain.handle("text_export_pdf", async () => {
         const win = BrowserWindow.getFocusedWindow();
         const { canceled, filePath } = await dialog.showSaveDialog({
             filters: [pdfFilter],

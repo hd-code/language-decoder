@@ -1,5 +1,4 @@
 import * as React from "react";
-import { deepClone } from "../../../lib/clone";
 import {
     Api,
     Language,
@@ -18,48 +17,33 @@ interface EditTranslationScreenProps {
 
 type tokenMap = { [token: string]: string[] };
 
-export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
-    api,
-    text,
-    setText,
-    lang,
-    setEdit,
-}) => {
-    const tokens = tokenize(text.text, true, true);
+export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = (
+    props,
+) => {
+    const tokens = tokenize(props.text.text, true, true);
 
-    const lines = tokenize(text.text);
-    const [title, ...tex] = lines;
+    const lines = tokenize(props.text.text);
+    const [title, ...text] = lines;
+
+    const translation = props.text.translations?.[props.lang] ?? [];
 
     const [form, setForm] = React.useState(() => {
         const result: { [name: string]: string } = {};
         lines.forEach((line, i) => {
             line.forEach((_, j) => {
-                result[`${i}-${j}`] = text.translations[lang]?.[i]?.[j] ?? "";
+                result[`${i}-${j}`] = translation[i]?.[j] ?? "";
             });
         });
         return result;
     });
-    const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setForm({
-            [event.target.name]: event.target.value,
-        });
-    };
-    const onSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-
-        let translation = deepClone(lines);
+    const addTransFromDict = (dict: tokenMap) => {
+        const newForm: typeof form = {};
         for (const name in form) {
-            const [i, j] = name.split("-").map((n) => parseInt(n));
-            translation[i][j] = form[name];
+            const [i, j] = name.split("-").map((x) => parseInt(x));
+            const token = tokens[i][j];
+            newForm[name] = dict[token]?.[0] ?? "";
         }
-
-        const t = deepClone(text);
-        t.translations[lang] = translation;
-        setText(t);
-        setEdit(false);
-    };
-    const onAbort = () => {
-        setEdit(false);
+        setForm(newForm);
     };
 
     const [dict, setDict] = React.useState<tokenMap>({});
@@ -72,39 +56,50 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
         let count = 0;
 
         Object.keys(newDict).forEach((token) => {
-            api.translate(token, text.language, lang).then((words) => {
-                newDict[token] = words;
-                if (++count >= nTokens) {
-                    for (const name in form) {
-                        if (form[name] !== "") continue;
-                        const [i, j] = name.split("-").map((x) => parseInt(x));
-                        const token = tokens[i][j];
-                        if (newDict[token]?.length >= 1) {
-                            setForm((prev) => ({
-                                ...prev,
-                                [name]: newDict[token][0],
-                            }));
+            props.api
+                .translate(token, props.text.language, props.lang)
+                .then((words) => {
+                    newDict[token] = words;
+                    if (++count >= nTokens) {
+                        if (translation.length === 0) {
+                            addTransFromDict(newDict);
                         }
+                        setDict(newDict);
                     }
-                    setDict(newDict);
-                }
-            });
+                });
         });
-    }, [lang]);
+    }, [props.lang]);
 
-    const makeOptions = (word: string, trans?: string) => {
-        const opts = dict[tokenize(word, true, true)[0][0]] ?? [];
-        if (trans && !opts.includes(trans)) {
-            opts.push(trans);
+    const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setForm((f) => ({ ...f, [event.target.name]: event.target.value }));
+    };
+    const onSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+
+        const newTrans = lines.map((line) => line.map(() => ""));
+        for (const name in form) {
+            const [i, j] = name.split("-").map((n) => parseInt(n));
+            newTrans[i][j] = form[name];
         }
-        return opts;
+
+        props.setText({
+            ...props.text,
+            translations: {
+                ...props.text.translations,
+                [props.lang]: newTrans,
+            },
+        });
+        props.setEdit(false);
+    };
+    const onAbort = () => {
+        props.setEdit(false);
     };
 
     return (
         <form onSubmit={onSubmit}>
             <p className="fz-80 mb-1 italic text-center">
-                {languageLabelsEnglish[text.language]} text
-                {text.author && ` by ${text.author}`}
+                {languageLabelsEnglish[props.text.language]} text
+                {props.text.author && ` by ${props.text.author}`}
             </p>
 
             <h1 className="flex flex-wrap flex-x-center mb-1 fz-120 text-center">
@@ -116,20 +111,13 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
                             value={form[`0-${i}`]}
                             onChange={onChange}
                         >
-                            {makeOptions(
-                                token,
-                                text.translations[lang]?.[0][i],
-                            ).map((word) => (
-                                <option key={word} value={word}>
-                                    {word}
-                                </option>
-                            ))}
+                            {dict[tokens[0][i]]?.map(opt)}
                         </select>
                     </span>
                 ))}
             </h1>
 
-            {tex.map((line, i) => (
+            {text.map((line, i) => (
                 <p key={i} className="flex flex-wrap mb-05 text-center">
                     {line.map((token, j) => (
                         <span key={j} className="mr-025">
@@ -139,14 +127,7 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
                                 value={form[`${i + 1}-${j}`]}
                                 onChange={onChange}
                             >
-                                {makeOptions(
-                                    token,
-                                    text.translations[lang]?.[i + 1][j],
-                                ).map((word) => (
-                                    <option key={word} value={word}>
-                                        {word}
-                                    </option>
-                                ))}
+                                {dict[tokens[i + 1][j]]?.map(opt)}
                             </select>
                         </span>
                     ))}
@@ -162,3 +143,9 @@ export const EditTranslationScreen: React.FC<EditTranslationScreenProps> = ({
         </form>
     );
 };
+
+const opt = (value: string) => (
+    <option key={value} value={value}>
+        {value}
+    </option>
+);

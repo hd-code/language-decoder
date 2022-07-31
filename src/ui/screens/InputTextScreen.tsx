@@ -3,12 +3,12 @@ import { Api, Language, Text, languageLabelsEnglish } from "../../domain";
 
 interface InputTextScreenProps {
     api: Api;
-    onCreateText: (t: Text, l: Language) => void;
+    setText: React.Dispatch<Text>;
+    setLang: React.Dispatch<Language>;
+    setEdit: React.Dispatch<boolean>;
 }
 
-export const InputTextScreen: React.FC<InputTextScreenProps> = ({
-    onCreateText,
-}) => {
+export const InputTextScreen: React.FC<InputTextScreenProps> = (props) => {
     const [form, setForm] = React.useState({
         author: "J.R.R. Tolkien",
         title: "The Lord of the Rings",
@@ -22,10 +22,10 @@ export const InputTextScreen: React.FC<InputTextScreenProps> = ({
             HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
         >,
     ) => {
-        setForm({
-            ...form,
+        setForm((f) => ({
+            ...f,
             [event.target.name]: event.target.value,
-        });
+        }));
     };
 
     const onSubmit = (event: React.FormEvent) => {
@@ -36,7 +36,9 @@ export const InputTextScreen: React.FC<InputTextScreenProps> = ({
             language: form.from,
             translations: {},
         };
-        onCreateText(t, form.to);
+        props.setText(t);
+        props.setLang(form.to);
+        props.setEdit(true);
     };
 
     return (
@@ -54,14 +56,14 @@ export const InputTextScreen: React.FC<InputTextScreenProps> = ({
             <label className="block">
                 From:
                 <select name="from" value={form.from} onChange={onChange}>
-                    {langOpts}
+                    {langOpts()}
                 </select>
             </label>
 
             <label className="block">
                 To:
                 <select name="to" value={form.to} onChange={onChange}>
-                    {langOpts}
+                    {langOpts(form.from)}
                 </select>
             </label>
 
@@ -91,11 +93,11 @@ export const InputTextScreen: React.FC<InputTextScreenProps> = ({
     );
 };
 
-const langOpts = Object.keys(Language).map((lang) => {
-    const value = Language[lang as keyof typeof Language];
-    return (
-        <option key={value} value={value}>
-            {languageLabelsEnglish[value]}
-        </option>
-    );
-});
+const langOpts = (except?: Language) =>
+    Object.values(Language)
+        .filter((l) => l !== except)
+        .map((l) => (
+            <option key={l} value={l}>
+                {languageLabelsEnglish[l]}
+            </option>
+        ));

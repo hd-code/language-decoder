@@ -13,14 +13,8 @@ export const App: React.FC = () => {
     const [lang, setLang] = React.useState<Language>(Language.german);
     const [edit, setEdit] = React.useState(false);
 
-    const onCreateText = (t: Text, l: Language) => {
-        setText(t);
-        setLang(l);
-        setEdit(true);
-    };
-
     return text === null ? (
-        <InputTextScreen {...{ api, onCreateText }} />
+        <InputTextScreen {...{ api, setText, setLang, setEdit }} />
     ) : edit ? (
         <EditTranslationScreen {...{ api, text, setText, lang, setEdit }} />
     ) : (

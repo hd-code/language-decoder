@@ -16,57 +16,48 @@ interface ShowTextScreenProps {
     setEdit: React.Dispatch<boolean>;
 }
 
-export const ShowTextScreen: React.FC<ShowTextScreenProps> = ({
-    api,
-    text,
-    setText,
-    lang,
-    setLang,
-    setEdit,
-}) => {
-    const [title, ...tex] = tokenize(text.text);
+export const ShowTextScreen: React.FC<ShowTextScreenProps> = (props) => {
+    const [title, ...text] = tokenize(props.text.text);
+    const translation = props.text.translations[props.lang];
 
-    const translationsHave = Object.keys(text.translations) as Language[];
-    const translationsToAdd = Object.values(Language).filter(
-        (lang) => lang !== text.language && !translationsHave.includes(lang),
+    const transHave = Object.keys(props.text.translations) as Language[];
+    const transToAdd = Object.values(Language).filter(
+        (lang) => lang !== props.text.language && !transHave.includes(lang),
     );
 
-    console.log(text)
+    console.log(text);
 
     const onCreate = () => {
-        setText(null);
+        props.setText(null);
     };
     const onLoad = async () => {
-        const t = await api.loadText();
+        const t = await props.api.loadText();
         if (t === null) return;
         const newLang = Object.keys(t.translations)[0] as Language;
-        setText(t);
-        setLang(newLang);
+        props.setText(t);
+        props.setLang(newLang);
     };
     const onSave = async () => {
-        const err = await api.saveText(text);
-        if (err) {
-            console.error(err);
-        }
+        await props.api.saveText(props.text);
     };
     const onExport = async () => {
-        await api.exportPDF(text);
+        await props.api.exportPDF(props.text);
     };
 
     return (
         <>
             <p className="fz-80 mb-1 italic text-center">
-                {languageLabelsEnglish[text.language]} text
-                {text.author && ` by ${text.author}`}
+                {languageLabelsEnglish[props.text.language]} text
+                {props.text.author && ` by ${props.text.author}`}
             </p>
 
             <h1 className="flex flex-wrap flex-x-center mb-1 fz-120 text-center">
-                {textLine(title, text.translations[lang]?.[0] ?? [])}
+                {textLine(title, translation?.[0] ?? [])}
             </h1>
 
-            {tex.map((line, i) => (
+            {text.map((line, i) => (
                 <p key={i} className="flex flex-wrap mb-05 text-center">
-                    {textLine(line, text.translations[lang]?.[i + 1] ?? [])}
+                    {textLine(line, translation?.[i + 1] ?? [])}
                 </p>
             ))}
 
@@ -82,28 +73,32 @@ export const ShowTextScreen: React.FC<ShowTextScreenProps> = ({
                     Translation:
                     <select
                         className="mr-025"
-                        value={lang}
-                        onChange={(ev) => setLang(ev.target.value as Language)}
+                        value={props.lang}
+                        onChange={(ev) =>
+                            props.setLang(ev.target.value as Language)
+                        }
                     >
-                        {translationsHave.map((lang) => (
+                        {transHave.map((lang) => (
                             <option key={lang} value={lang}>
                                 {languageLabelsEnglish[lang]}
                             </option>
                         ))}
                         <option disabled={true}>---</option>
-                        {translationsToAdd.map((lang) => (
+                        {transToAdd.map((lang) => (
                             <option key={lang} value={lang}>
                                 + {languageLabelsEnglish[lang]}
                             </option>
                         ))}
                     </select>
-                    <button onClick={() => setEdit(true)}>
-                        {translationsHave.includes(lang) ? "Edit" : "Add"}
+                    <button onClick={() => props.setEdit(true)}>
+                        {transHave.includes(props.lang) ? "Edit" : "Add"}
                     </button>
                 </div>
 
                 <div>
-                    <button onClick={onExport} className="mr-025">Export</button>
+                    <button onClick={onExport} className="mr-025">
+                        Export
+                    </button>
                     <button onClick={onSave}>Save</button>
                 </div>
             </div>
