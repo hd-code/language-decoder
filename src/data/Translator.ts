@@ -1,20 +1,20 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-import { translate } from "../../lib/translate";
-import { Language } from "../domain";
+import { Language, translate } from "../domain";
 import { FileStorage } from "./FileStorage";
 
 export class Translator {
-    private dictDirPath: string;
     private fileStorage: FileStorage<string[]>;
     private filename: string;
 
-    async init(dictDirPath: string) {
-        this.dictDirPath = path.resolve(dictDirPath);
+    constructor(private dictDirPath: string, private webTranslate: translate) {}
+
+    async init() {
+        this.dictDirPath = path.resolve(this.dictDirPath);
         try {
             await fs.readdir(this.dictDirPath);
         } catch (err) {
-            fs.mkdir(this.dictDirPath, { recursive: true });
+            await fs.mkdir(this.dictDirPath, { recursive: true });
         }
     }
 
@@ -31,8 +31,13 @@ export class Translator {
             return words;
         }
 
-        const newWords = await translate(word, from, to);
-        this.fileStorage.set(word, newWords);
-        return newWords;
+        try {
+            const newWords = await this.webTranslate(word, from, to);
+            this.fileStorage.set(word, newWords);
+            return newWords;
+        } catch (err) {
+            console.error("Error on online translate", err);
+        }
+        return [word];
     }
 }

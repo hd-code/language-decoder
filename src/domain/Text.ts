@@ -1,4 +1,5 @@
-import { Language } from "./Language";
+import { hasKey, isObject, isString } from "../../lib/type-guards";
+import { Language, isLanguage } from "./Language";
 
 // -----------------------------------------------------------------------------
 
@@ -9,8 +10,28 @@ export type Text = {
     translations: { [lang in Language]?: string[][] };
 };
 
-// TODO: implement type guard
 export function isText(text: unknown): text is Text {
+    return (
+        hasKey(text, "language", isLanguage) &&
+        hasKey(text, "text", isString) &&
+        hasKey(text, "translations", isObject) &&
+        (!hasKey(text, "author") || hasKey(text, "author", isString)) &&
+        checkTranslations(text)
+    );
+}
+
+function checkTranslations(text: Text): boolean {
+    if (Object.keys(text.translations).length === 0) return false;
+
+    const wordsPerLine = tokenize(text.text).map((line) => line.length);
+    for (const lang in text.translations) {
+        const trans = text.translations[lang as Language];
+        if (wordsPerLine.length !== trans.length) return false;
+        for (let i = 0, ie = wordsPerLine.length; i < ie; i++) {
+            if (wordsPerLine[i] !== trans[i].length) return false;
+        }
+    }
+
     return true;
 }
 

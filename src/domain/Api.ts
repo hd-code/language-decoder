@@ -1,12 +1,8 @@
-import { Language } from "./Language";
 import { Text } from "./Text";
+import { translate } from "./translate";
 
 export interface Api {
-    translate: (
-        word: string,
-        from: Language,
-        to: Language,
-    ) => Promise<string[]>;
+    translate: translate;
 
     saveText: (text: Text) => Promise<Error | null>;
     loadText: () => Promise<Text | null>;

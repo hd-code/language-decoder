@@ -1,9 +1,15 @@
+import { isEnum } from "../../lib/type-guards";
+
 export enum Language {
     english = "en",
     french = "fr",
     german = "de",
     italian = "it",
     spanish = "es",
+}
+
+export function isLanguage(l: unknown): l is Language {
+    return isEnum(l, Language);
 }
 
 export const languageLabels: { [lang in Language]: string } = {

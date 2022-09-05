@@ -25,7 +25,19 @@ export const ShowTextScreen: React.FC<ShowTextScreenProps> = (props) => {
         (lang) => lang !== props.text.language && !transHave.includes(lang),
     );
 
-    console.log(text);
+    React.useEffect(() => {
+        if (!transHave.includes(props.lang)) {
+            props.setLang(Object.keys(props.text.translations)[0] as Language);
+        }
+    });
+
+    const onChangeTrans = (ev: React.ChangeEvent<HTMLSelectElement>) => {
+        const newTrans = ev.target.value as Language;
+        props.setLang(newTrans);
+        if (transToAdd.includes(newTrans)) {
+            props.setEdit(true);
+        }
+    };
 
     const onCreate = () => {
         props.setText(null);
@@ -74,9 +86,7 @@ export const ShowTextScreen: React.FC<ShowTextScreenProps> = (props) => {
                     <select
                         className="mr-025"
                         value={props.lang}
-                        onChange={(ev) =>
-                            props.setLang(ev.target.value as Language)
-                        }
+                        onChange={onChangeTrans}
                     >
                         {transHave.map((lang) => (
                             <option key={lang} value={lang}>
@@ -90,9 +100,7 @@ export const ShowTextScreen: React.FC<ShowTextScreenProps> = (props) => {
                             </option>
                         ))}
                     </select>
-                    <button onClick={() => props.setEdit(true)}>
-                        {transHave.includes(props.lang) ? "Edit" : "Add"}
-                    </button>
+                    <button onClick={() => props.setEdit(true)}>Edit</button>
                 </div>
 
                 <div>

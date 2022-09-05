@@ -1,0 +1,17 @@
+# ToDos
+
+## Features
+
+- [ ] Check loaded file => reject when invalid
+- [ ] Filename for pdf export
+- [ ] modal => warning: not saved
+
+## Bugs
+
+- [ ] test loading/saving of several files
+
+## Ideas
+
+- [ ] Use Design Lib (Material, Bootstrap?)
+- [ ] Edit Dict => add, remove, change order
+- [ ] Punctutation in translation as well?

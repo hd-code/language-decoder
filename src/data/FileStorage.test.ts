@@ -88,6 +88,38 @@ describe(FileStorage.name, () => {
             assert.equal(data["hello"], "world");
         });
     });
+
+    describe("get", () => {
+        const data = { test: "Hello World", test2: "foo" };
+        const fileStore = new FileStorage();
+
+        before(async () => {
+            fs.writeFileSync(filepath, JSON.stringify(data));
+            await fileStore.init(filepath);
+        });
+        after(cleanUp);
+
+        it("should get correct value for test", () => {
+            const got = fileStore.get("test");
+            assert.equal(got, "Hello World");
+        });
+
+        it("should return null for unknown key", () => {
+            const got = fileStore.get("test_ghjt");
+            assert.equal(got, null);
+        });
+
+        it("should get previous set value", async () => {
+            const key = "test_ghjt";
+            const value = "nvudncsduhb";
+            const got = fileStore.get(key);
+            assert.equal(got, null);
+
+            await fileStore.set(key, value);
+            const got2 = fileStore.get(key);
+            assert.equal(got2, value);
+        });
+    });
 });
 
 function sleep(ms: number): Promise<void> {

@@ -40,6 +40,12 @@ export const InputTextScreen: React.FC<InputTextScreenProps> = (props) => {
         props.setLang(form.to);
         props.setEdit(true);
     };
+    const onOpen = async (event: React.FormEvent) => {
+        event.preventDefault();
+        const text = await props.api.loadText();
+        props.setText(text);
+        props.setLang(Object.keys(text.translations)[0] as Language);
+    };
 
     return (
         <form onSubmit={onSubmit}>
@@ -88,6 +94,7 @@ export const InputTextScreen: React.FC<InputTextScreenProps> = (props) => {
                 />
             </label>
 
+            <button onClick={onOpen}>Open</button>
             <button type="submit">Translate</button>
         </form>
     );
